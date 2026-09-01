@@ -9,32 +9,41 @@
 <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
 <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<!-- External Stylesheet -->
+<link rel="stylesheet" href="style.css">
+
+<!-- Third-party Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
-  <div class="brand">
-    <button class="lang-toggle" id="langToggle" type="button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="2" y1="12" x2="22" y2="12"></line>
-        <path d="M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"></path>
-      </svg>
+  <div class="topbar">
+    <button class="lang-toggle" id="langToggle" type="button" aria-label="Toggle language">
       <span id="langLabel">EN</span>
     </button>
-    <div class="logo">SMART <span>PARKING</span></div>
   </div>
   <div id="view"></div>
 </div>
 
-<!-- Python engine (ticket ID gen) -->
-<script type="py" src="script.py"></script>
+<!-- ==================== PYTHON CORE ENGINE ==================== -->
+<script type="py">
+import time
+import random
 
-<!-- JS flow engine -->
+def gen_ticket_id_py():
+    t_ms = int(time.time() * 1000)
+    t_hex = hex(t_ms)[2:].upper()
+    rand_suffix = format(random.randint(0, 255), '02X')
+    return "P-" + t_hex[-6:] + rand_suffix
+</script>
+
+<!-- External Application Logic -->
 <script src="app.js"></script>
 </body>
 </html>
