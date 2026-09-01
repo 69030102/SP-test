@@ -17,7 +17,6 @@
 <!-- External Stylesheet -->
 <link rel="stylesheet" href="style.css">
 
-<!-- Third-party Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -31,19 +30,10 @@
   <div id="view"></div>
 </div>
 
-<!-- ==================== PYTHON CORE ENGINE ==================== -->
-<script type="py">
-import time
-import random
+<!-- เรียกใช้ Python Script จากไฟล์ภายนอก -->
+<script type="py" src="script.py" config='{"packages":[]}''></script>
 
-def gen_ticket_id_py():
-    t_ms = int(time.time() * 1000)
-    t_hex = hex(t_ms)[2:].upper()
-    rand_suffix = format(random.randint(0, 255), '02X')
-    return "P-" + t_hex[-6:] + rand_suffix
-</script>
-
-<!-- External Application Logic -->
+<!-- External Application Script -->
 <script src="app.js"></script>
 </body>
 </html>
