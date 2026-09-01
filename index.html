@@ -265,9 +265,9 @@ function barcodeHTML(seed){
   let n = seed || 1;
   const rnd = () => { n = (n * 9301 + 49297) % 233280; return n / 233280; };
   const bars = pattern.map((w, i) => {
-    const width = 2 + Math.floor(rnd() * 3);
+    const weight = 2 + Math.floor(rnd() * 3);
     const on = i % 2 === 0;
-    return `<i style="width:${width}px;background:${on ? 'var(--ink)' : 'transparent'};"></i>`;
+    return `<i style="flex:${weight} 0 0;background:${on ? 'var(--ink)' : 'transparent'};"></i>`;
   }).join('');
   return `<div class="barcode">${bars}</div>`;
 }
@@ -344,7 +344,7 @@ function renderTicket(view, params){
         <p class="msg-sub" style="margin-bottom:10px;">${tr('ticket_sub')}</p>
         ${lineItem(tr('label_id'), id)}
         ${lineItem(tr('label_checkin'), fmtDateTime(t))}
-        ${lineItem(tr('label_rate'), `${CONFIG.CURRENCY}${CONFIG.RATE_PER_HOUR}/hr`)}
+        ${lineItem(tr('label_rate'), `<span style="font-family:Arial,Helvetica,sans-serif;">${CONFIG.CURRENCY}</span>${CONFIG.RATE_PER_HOUR}/hr`)}
         <div class="dash"></div>
         <div class="barcode-label">${tr('exit_label')}</div>
         ${barcodeHTML(id.length + t)}
