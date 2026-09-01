@@ -9,151 +9,141 @@
 <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
 <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
   :root{
-    --ink:#14161d;
-    --ink-2:#1d202a;
-    --paper:#efe6d2;
-    --paper-2:#e2d5b6;
-    --text:#221d13;
-    --muted:#8a7f68;
-    --amber:#d98b2b;
-    --stripe:#221d13;
+    --counter:#312a24;
+    --paper:#fbfaf4;
+    --ink:#1c1a17;
+    --muted:#8c8377;
+    --stamp:#b5292f;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    font-family:'Inter',system-ui,-apple-system,sans-serif;
-    background:var(--ink);
-    background-image:
-      radial-gradient(ellipse at top, rgba(217,139,43,0.10), transparent 55%);
-    color:var(--text);
+    font-family:'Roboto Mono',monospace;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(255,255,255,0.05), transparent 60%),
+      var(--counter);
+    color:var(--paper);
     min-height:100vh;
     display:flex;
     align-items:flex-start;
     justify-content:center;
-    padding:52px 20px;
+    padding:56px 20px;
   }
-  .app{ width:100%; max-width:420px; }
+  .app{ width:100%; max-width:320px; position:relative; }
 
-  .brand{ display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
-  .logo{ font-family:'Roboto Mono',monospace; font-weight:700; font-size:15px; letter-spacing:0.5px; color:var(--paper); }
-  .logo span{ color:var(--amber); }
-
+  .topbar{ display:flex; justify-content:flex-end; margin-bottom:14px; }
   .lang-toggle{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:34px; height:34px;
-    background:var(--ink-2); border:1px solid rgba(239,230,210,0.18); border-radius:4px;
-    cursor:pointer; font-family:'Roboto Mono',monospace; font-size:11px; font-weight:700; color:var(--paper);
+    background:transparent; border:1px solid rgba(251,250,244,0.3); border-radius:3px;
+    color:rgba(251,250,244,0.75); font-family:'Roboto Mono',monospace; font-size:11px; font-weight:700;
+    padding:5px 10px; cursor:pointer; letter-spacing:0.5px;
   }
-  .lang-toggle:hover{ border-color:var(--amber); color:var(--amber); }
-  .lang-toggle:focus-visible, .btn:focus-visible, .staff-link:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+  .lang-toggle:hover{ border-color:var(--paper); color:var(--paper); }
+  .lang-toggle:focus-visible, .btn:focus-visible, .staff-link:focus-visible{ outline:2px solid var(--paper); outline-offset:2px; }
 
-  .stripe-bar{
-    height:8px; border-radius:4px 4px 0 0;
-    background: repeating-linear-gradient(-45deg, var(--amber) 0 10px, var(--stripe) 10px 20px);
+  .receipt-wrap{ position:relative; }
+  .torn{ height:9px; }
+  .torn.top{
+    background-image: linear-gradient(45deg, var(--counter) 6px, transparent 0), linear-gradient(-45deg, var(--counter) 6px, transparent 0);
+    background-position: left bottom; background-size: 12px 9px; background-repeat: repeat-x;
+    background-color: var(--paper);
   }
-
-  .card{
-    background:var(--paper);
-    border-radius:0 0 4px 4px;
-    box-shadow: 7px 7px 0 var(--stripe);
-    padding:30px 26px 26px;
-    margin-bottom:22px;
-  }
-
-  .status{ display:flex; align-items:center; gap:8px; margin-bottom:16px; }
-  .status svg{ width:20px; height:20px; flex-shrink:0; }
-  .status-text{ font-family:'Roboto Mono',monospace; font-size:11px; color:var(--muted); }
-
-  h1{ font-family:'Roboto Mono',monospace; font-size:21px; font-weight:700; line-height:1.35; margin:0 0 8px 0; }
-  .sub{ font-size:14px; color:var(--muted); line-height:1.55; margin:0 0 22px 0; max-width:34ch; }
-
-  .qr-wrap{
-    display:flex; justify-content:center; padding:18px;
-  }
-  .qr-frame{
-    border:2px dashed rgba(34,29,19,0.35); border-radius:50%;
-    padding:14px; transform:rotate(-3deg);
-    background:#fff;
-  }
-  #qrcode img, #qrcode canvas{ display:block; border-radius:3px; }
-
-  .row{
-    display:flex; justify-content:space-between; align-items:baseline;
-    padding:11px 0; border-top:1px solid rgba(34,29,19,0.12);
-  }
-  .row:first-of-type{ border-top:none; }
-  .row .label{ font-size:12.5px; color:var(--muted); }
-  .row .value{ font-size:14px; color:var(--text); font-weight:600; font-family:'Roboto Mono',monospace; }
-
-  .ticket-id{
-    font-family:'Roboto Mono',monospace; font-weight:700;
-    font-size:34px; letter-spacing:0.5px; line-height:1.1;
-    margin:2px 0 18px 0; word-break:break-all;
+  .torn.bottom{
+    background-image: linear-gradient(135deg, var(--counter) 6px, transparent 0), linear-gradient(-135deg, var(--counter) 6px, transparent 0);
+    background-position: left top; background-size: 12px 9px; background-repeat: repeat-x;
+    background-color: var(--paper);
   }
 
-  .stub{
-    position:relative;
-    margin:22px -26px 18px;
-    padding:0 26px;
-    height:1px;
-    background-image: repeating-linear-gradient(to right, rgba(34,29,19,0.35) 0 6px, transparent 6px 13px);
+  .receipt{
+    background:var(--paper); color:var(--ink);
+    padding:26px 22px;
+    box-shadow: 0 18px 34px -14px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.25);
+    overflow:visible;
   }
-  .stub::before, .stub::after{
-    content:""; position:absolute; top:50%; transform:translateY(-50%);
-    width:18px; height:18px; border-radius:50%;
-    background:var(--ink);
+
+  .store{ text-align:center; margin-bottom:4px; }
+  .store-name{ font-weight:700; font-size:16px; letter-spacing:1px; }
+  .store-sub{ font-size:10.5px; color:var(--muted); margin-top:3px; }
+
+  .dash{ height:0; margin:16px 0; border-top:1px dashed rgba(28,26,23,0.35); }
+
+  .msg-title{ font-size:14px; font-weight:700; margin:0 0 6px 0; line-height:1.4; text-align:center; }
+  .msg-sub{ font-size:11.5px; color:var(--muted); line-height:1.6; text-align:center; margin:0; }
+
+  .status-line{ font-size:10.5px; color:var(--muted); text-align:center; margin:10px 0 0 0; letter-spacing:0.5px; }
+
+  .li{ display:flex; align-items:flex-end; gap:4px; font-size:11.5px; margin:8px 0; }
+  .li .lbl{ color:var(--muted); white-space:nowrap; }
+  .li .fill{ flex:1; border-bottom:1px dotted rgba(28,26,23,0.4); margin-bottom:3px; }
+  .li .val{ font-weight:700; white-space:nowrap; }
+
+  .barcode{
+    height:32px; margin:16px 0 4px;
+    background-image: repeating-linear-gradient(90deg,
+      var(--ink) 0 2px, transparent 2px 4px,
+      var(--ink) 4px 5px, transparent 5px 9px,
+      var(--ink) 9px 12px, transparent 12px 14px);
   }
-  .stub::before{ left:-9px; }
-  .stub::after{ right:-9px; }
+  .barcode-label{ text-align:center; font-size:9px; letter-spacing:2px; color:var(--muted); margin-bottom:4px; }
+
+  .qr-wrap{ display:flex; justify-content:center; padding:12px 0; }
+  #qrcode img, #qrcode canvas{ display:block; }
+
+  .footer-note{ text-align:center; font-size:10px; color:var(--muted); line-height:1.7; margin-top:4px; }
+
+  .stamp{
+    position:absolute; top:10px; right:-6px;
+    width:82px; height:82px; border:3px solid var(--stamp); border-radius:50%;
+    color:var(--stamp); display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:10px; text-align:center; line-height:1.3;
+    transform:rotate(-16deg); opacity:0.88; mix-blend-mode:multiply;
+    background:transparent;
+  }
 
   .btn{
-    width:100%; display:block; text-align:center; padding:13px 18px;
-    border-radius:4px; font-size:14.5px; font-weight:600; font-family:'Inter',sans-serif; border:1.5px solid var(--stripe);
-    cursor:pointer; text-decoration:none; transition:transform .12s ease;
-    background:var(--stripe); color:var(--paper);
+    width:100%; display:block; text-align:center; padding:12px 16px; margin-top:20px;
+    border-radius:3px; font-size:13px; font-weight:700; font-family:'Roboto Mono',monospace;
+    border:1.5px solid var(--paper); letter-spacing:0.5px;
+    cursor:pointer; text-decoration:none; background:transparent; color:var(--paper);
+    transition:background .15s ease, color .15s ease;
   }
-  .btn:hover{ transform:translateY(-1px); }
-  .btn:active{ transform:translateY(0); }
+  .btn:hover{ background:var(--paper); color:var(--ink); }
 
-  .footnote{ text-align:center; font-size:12px; color:rgba(239,230,210,0.55); margin-top:16px; line-height:1.6; }
-
-  .error{ text-align:center; }
-  .error h1{ color:var(--amber); }
+  .rate-note{ text-align:center; font-size:10.5px; color:rgba(251,250,244,0.55); margin-top:14px; line-height:1.6; }
 
   .staff-link{
-    display:block; text-align:center; font-size:12.5px; color:var(--muted);
-    text-decoration:none; margin-top:16px; font-weight:500;
+    display:block; text-align:center; font-size:11px; color:rgba(251,250,244,0.55);
+    text-decoration:none; margin-top:16px; letter-spacing:0.3px;
   }
-  .staff-link:hover{ color:var(--text); }
+  .staff-link:hover{ color:var(--paper); }
 
-  @keyframes dispense{
-    from{ opacity:0; transform:translateY(28px) rotate(-1.5deg); }
-    to{ opacity:1; transform:translateY(0) rotate(0deg); }
-  }
-  .dispense{ animation: dispense .5s cubic-bezier(.2,.8,.3,1) both; }
+  .error .msg-title{ color:var(--stamp); }
+
+  @keyframes printOut{ from{ clip-path: inset(0 0 100% 0); } to{ clip-path: inset(0 0 0 0); } }
+  .print-in{ animation: printOut .55s steps(16, end) both; }
 
   @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
   .fade-in{ animation: fadeIn .4s ease both; }
 
-  .gate{ transform-origin: 4px 16px; transition: transform .55s cubic-bezier(.34,1.4,.64,1); }
-  .gate.up{ transform: rotate(-72deg); }
+  @keyframes stampIn{
+    from{ transform:rotate(-16deg) scale(2.2); opacity:0; }
+    to{ transform:rotate(-16deg) scale(1); opacity:0.88; }
+  }
+  .stamp-in{ animation: stampIn .35s cubic-bezier(.3,1.4,.5,1) .5s both; }
 
   @media (prefers-reduced-motion: reduce){
-    .dispense, .fade-in{ animation:none !important; }
-    .gate{ transition:none !important; }
+    .print-in, .fade-in, .stamp-in{ animation:none !important; }
   }
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="brand">
-    <div class="logo">SMART <span>PARKING</span></div>
+  <div class="topbar">
     <button class="lang-toggle" id="langToggle" type="button" aria-label="Toggle language">
       <span id="langLabel">EN</span>
     </button>
@@ -185,38 +175,44 @@ let LANG = "th";
 
 const STR = {
   th: {
-    status_home: "จุดทางเข้า — ประตูปิดอยู่",
+    store_sub: "ทางเข้า · จุดออกบัตรอัตโนมัติ",
     home_title: "สแกน QR เพื่อรับบิลจอดรถ",
     home_sub: "ใช้กล้องมือถือสแกนโค้ดด้านล่าง ระบบจะออกบิลจอดรถให้ทันทีตามเวลาที่สแกน",
-    status_ticket: "เข้าจอดแล้ว — ประตูเปิด",
-    ticket_title: "บัตรจอดรถของคุณ",
-    ticket_sub: "เก็บหน้านี้ไว้ หรือบันทึกเป็นรูปภาพ แสดง QR ด้านล่างตอนออกจากลานจอด",
+    scan_label: "SCAN TO ENTER",
+    awaiting: "รอสแกน",
+    ticket_sub: "เก็บใบนี้ไว้ หรือบันทึกเป็นรูปภาพ แสดง QR ด้านล่างตอนออกจากลานจอด",
     label_id: "หมายเลขบัตร",
     label_checkin: "เวลาเข้าจอด",
-    ticket_qr_note: "แสดง QR นี้ให้เครื่องสแกนตอนออก",
+    label_rate: "อัตราค่าจอด",
+    stamp_text: "เข้าจอด\nแล้ว",
+    exit_label: "SCAN TO EXIT",
     save_ticket_btn: "บันทึกบัตรลงมือถือ",
-    footnote: h => `ชั่วโมงแรกฟรี จากนั้นคิด ${CONFIG.CURRENCY}${h} ต่อชั่วโมง`,
+    rate_note: h => `ชั่วโมงแรกฟรี จากนั้นคิด ${CONFIG.CURRENCY}${h} ต่อชั่วโมง`,
     not_found_title: "ไม่พบข้อมูลบัตร",
     not_found_sub: "ลิงก์นี้ไม่ถูกต้องหรือหมดอายุ",
     back_home: "กลับหน้าแรก",
-    staff_link: "สำหรับเจ้าหน้าที่ (สแกนออก) →"
+    staff_link: "สำหรับเจ้าหน้าที่ (สแกนออก) →",
+    footer_note: "โปรดเก็บใบนี้ไว้จนกว่าจะออกจากลานจอด"
   },
   en: {
-    status_home: "Entry point — gate closed",
+    store_sub: "Entry Terminal · Auto Ticketing",
     home_title: "Scan the QR to get a parking ticket",
     home_sub: "Use your phone camera to scan the code below. A ticket will be issued instantly.",
-    status_ticket: "Checked in — gate open",
-    ticket_title: "Your parking ticket",
-    ticket_sub: "Keep this page, or save it as an image. Show the QR below when you leave.",
+    scan_label: "SCAN TO ENTER",
+    awaiting: "Awaiting scan",
+    ticket_sub: "Keep this ticket, or save it as an image. Show the QR below when you leave.",
     label_id: "Ticket No.",
     label_checkin: "Check-in time",
-    ticket_qr_note: "Show this QR to the scanner when you exit",
+    label_rate: "Rate",
+    stamp_text: "ENTRY\nOK",
+    exit_label: "SCAN TO EXIT",
     save_ticket_btn: "Save ticket to phone",
-    footnote: h => `First hour free, then ${CONFIG.CURRENCY}${h} per hour`,
+    rate_note: h => `First hour free, then ${CONFIG.CURRENCY}${h} per hour`,
     not_found_title: "Ticket not found",
     not_found_sub: "This link is invalid or expired.",
     back_home: "Back to home",
-    staff_link: "Staff exit scanner →"
+    staff_link: "Staff exit scanner →",
+    footer_note: "Please keep this ticket until you leave the car park"
   }
 };
 
@@ -265,13 +261,8 @@ function buildUrl(path, params){
   return location.origin + location.pathname + "#" + path + (qs ? "?" + qs : "");
 }
 
-function gateIcon(id, isUp){
-  return `
-  <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="1" y="3" width="5" height="26" rx="1" fill="var(--stripe)"/>
-    <line class="gate${isUp ? ' up' : ''}" id="${id}" x1="4" y1="16" x2="27" y2="16" stroke="var(--stripe)" stroke-width="4" stroke-linecap="round"/>
-    <circle cx="4" cy="16" r="2.5" fill="var(--amber)"/>
-  </svg>`;
+function lineItem(label, value){
+  return `<div class="li"><span class="lbl">${label}</span><span class="fill"></span><span class="val">${value}</span></div>`;
 }
 
 function render(){
@@ -287,22 +278,27 @@ function render(){
 
 function renderHome(view){
   view.innerHTML = `
-    <div class="stripe-bar"></div>
-    <div class="card fade-in">
-      <div class="status">
-        ${gateIcon('gateHome', false)}
-        <span class="status-text">${tr('status_home')}</span>
+    <div class="receipt-wrap fade-in">
+      <div class="torn top"></div>
+      <div class="receipt">
+        <div class="store">
+          <div class="store-name">SMART PARKING</div>
+          <div class="store-sub">${tr('store_sub')}</div>
+        </div>
+        <div class="dash"></div>
+        <p class="msg-title">${tr('home_title')}</p>
+        <p class="msg-sub">${tr('home_sub')}</p>
+        <div class="barcode-label">${tr('scan_label')}</div>
+        <div class="barcode"></div>
+        <div class="qr-wrap" id="qrcode"></div>
+        <p class="status-line">${tr('awaiting')}</p>
       </div>
-      <h1>${tr('home_title')}</h1>
-      <p class="sub">${tr('home_sub')}</p>
-      <div class="qr-wrap">
-        <div class="qr-frame" id="qrcode"></div>
-      </div>
-      <a class="staff-link" href="exit-scan.html">${tr('staff_link')}</a>
+      <div class="torn bottom"></div>
     </div>
+    <a class="staff-link" href="exit-scan.html">${tr('staff_link')}</a>
   `;
   const url = buildUrl("/checkin", {});
-  new QRCode(document.getElementById("qrcode"), { text: url, width: 176, height: 176, correctLevel: QRCode.CorrectLevel.M });
+  new QRCode(document.getElementById("qrcode"), { text: url, width: 160, height: 160, correctLevel: QRCode.CorrectLevel.M });
 }
 
 function handleCheckin(){
@@ -329,37 +325,39 @@ function renderTicket(view, params){
   if(!id || !t) return renderNotFound(view);
 
   view.innerHTML = `
-    <div class="stripe-bar"></div>
-    <div class="card dispense" id="ticketCard">
-      <div class="status">
-        ${gateIcon('gateTicket', false)}
-        <span class="status-text">${tr('status_ticket')}</span>
+    <div class="receipt-wrap">
+      <div class="torn top"></div>
+      <div class="receipt print-in" id="ticketCard">
+        <div class="stamp stamp-in" id="entryStamp">${tr('stamp_text').replace('\n','<br>')}</div>
+        <div class="store">
+          <div class="store-name">SMART PARKING</div>
+          <div class="store-sub">${tr('store_sub')}</div>
+        </div>
+        <div class="dash"></div>
+        <p class="msg-sub" style="margin-bottom:10px;">${tr('ticket_sub')}</p>
+        ${lineItem(tr('label_id'), id)}
+        ${lineItem(tr('label_checkin'), fmtDateTime(t))}
+        ${lineItem(tr('label_rate'), `${CONFIG.CURRENCY}${CONFIG.RATE_PER_HOUR}/hr`)}
+        <div class="dash"></div>
+        <div class="barcode-label">${tr('exit_label')}</div>
+        <div class="barcode"></div>
+        <div class="qr-wrap" id="qrcode"></div>
+        <p class="footer-note">${tr('footer_note')}</p>
       </div>
-      <p class="sub" style="margin-bottom:4px;">${tr('label_id')}</p>
-      <div class="ticket-id">${id}</div>
-      <div class="row"><span class="label">${tr('label_checkin')}</span><span class="value">${fmtDateTime(t)}</span></div>
-      <div class="stub"></div>
-      <div class="qr-wrap">
-        <div class="qr-frame" id="qrcode"></div>
-      </div>
-      <p class="sub" style="margin:12px 0 0 0; text-align:center;">${tr('ticket_qr_note')}</p>
+      <div class="torn bottom"></div>
     </div>
     <button class="btn no-print" id="saveBtn">${tr('save_ticket_btn')}</button>
-    <p class="footnote">${tr('footnote', CONFIG.RATE_PER_HOUR)}</p>
+    <p class="rate-note">${tr('rate_note', CONFIG.RATE_PER_HOUR)}</p>
   `;
 
   const checkoutUrl = buildUrl("/checkout", { id, t });
-  new QRCode(document.getElementById("qrcode"), { text: checkoutUrl, width: 156, height: 156, correctLevel: QRCode.CorrectLevel.M });
+  new QRCode(document.getElementById("qrcode"), { text: checkoutUrl, width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M });
 
   playDing();
   vibrate(60);
-  setTimeout(() => {
-    const g = document.getElementById("gateTicket");
-    if(g) g.classList.add("up");
-  }, 120);
 
   document.getElementById("saveBtn").onclick = () => {
-    html2canvas(document.getElementById("ticketCard"), { backgroundColor: "#efe6d2", scale: 2 }).then(canvas => {
+    html2canvas(document.getElementById("ticketCard"), { backgroundColor: "#fbfaf4", scale: 2 }).then(canvas => {
       const link = document.createElement("a");
       link.download = "parking-ticket-" + id + ".png";
       link.href = canvas.toDataURL("image/png");
@@ -370,11 +368,18 @@ function renderTicket(view, params){
 
 function renderNotFound(view){
   view.innerHTML = `
-    <div class="stripe-bar"></div>
-    <div class="card error fade-in">
-      <h1>${tr('not_found_title')}</h1>
-      <p class="sub">${tr('not_found_sub')}</p>
-      <a class="btn" href="#/">${tr('back_home')}</a>
+    <div class="receipt-wrap fade-in">
+      <div class="torn top"></div>
+      <div class="receipt error">
+        <div class="store">
+          <div class="store-name">SMART PARKING</div>
+        </div>
+        <div class="dash"></div>
+        <p class="msg-title">${tr('not_found_title')}</p>
+        <p class="msg-sub">${tr('not_found_sub')}</p>
+        <a class="btn" href="#/" style="color:var(--ink); border-color:var(--ink);">${tr('back_home')}</a>
+      </div>
+      <div class="torn bottom"></div>
     </div>
   `;
 }
