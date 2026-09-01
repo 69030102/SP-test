@@ -191,17 +191,19 @@ function renderTicket(view, params){
     const btn = document.getElementById("saveBtn");
     const originalLabel = btn.textContent;
     btn.disabled = true;
+    
+    const targetCard = document.getElementById("ticketCard");
+    
+    // ปิด Animation ชั่วคราวเพื่อป้องกันตำแหน่งเคลื่อนขณะวาดรูป
+    targetCard.classList.remove("print-in");
+    
     try{
       if(document.fonts && document.fonts.ready){ await document.fonts.ready; }
-      
-      const targetCard = document.getElementById("ticketCard");
       
       const canvas = await html2canvas(targetCard, { 
         backgroundColor: "#fbfaf4", 
         scale: 2,
         useCORS: true,
-        letterRendering: true,
-        allowTaint: true,
         logging: false
       });
       
@@ -246,13 +248,6 @@ window.addEventListener("DOMContentLoaded", () => {
     };
   }
   
-  if(document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => {
-      if(!location.hash) location.hash = "/";
-      render();
-    });
-  } else {
-    if(!location.hash) location.hash = "/";
-    render();
-  }
+  if(!location.hash) location.hash = "/";
+  render();
 });
