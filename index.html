@@ -82,13 +82,8 @@
   .li .fill{ flex:1; border-bottom:1px dotted rgba(28,26,23,0.4); margin-bottom:3px; }
   .li .val{ font-weight:700; white-space:nowrap; }
 
-  .barcode{
-    height:32px; margin:16px 0 4px;
-    background-image: repeating-linear-gradient(90deg,
-      var(--ink) 0 2px, transparent 2px 4px,
-      var(--ink) 4px 5px, transparent 5px 9px,
-      var(--ink) 9px 12px, transparent 12px 14px);
-  }
+  .barcode{ height:32px; margin:16px 0 4px; display:flex; align-items:stretch; }
+  .barcode i{ display:block; height:100%; }
   .barcode-label{ text-align:center; font-size:9px; letter-spacing:2px; color:var(--muted); margin-bottom:4px; }
 
   .qr-wrap{ display:flex; justify-content:center; padding:12px 0; }
@@ -97,12 +92,12 @@
   .footer-note{ text-align:center; font-size:10px; color:var(--muted); line-height:1.7; margin-top:4px; }
 
   .stamp{
-    position:absolute; top:10px; right:-6px;
-    width:82px; height:82px; border:3px solid var(--stamp); border-radius:50%;
+    position:absolute; top:10px; right:8px;
+    width:78px; height:78px; border:3px solid var(--stamp); border-radius:50%;
     color:var(--stamp); display:flex; align-items:center; justify-content:center;
     font-weight:700; font-size:10px; text-align:center; line-height:1.3;
-    transform:rotate(-16deg); opacity:0.88; mix-blend-mode:multiply;
-    background:transparent;
+    transform:rotate(-16deg); opacity:0.88;
+    background:rgba(251,250,244,0.01);
   }
 
   .btn{
@@ -265,6 +260,18 @@ function lineItem(label, value){
   return `<div class="li"><span class="lbl">${label}</span><span class="fill"></span><span class="val">${value}</span></div>`;
 }
 
+function barcodeHTML(seed){
+  const pattern = [3,2,1,4,2,1,3,1,2,4,1,3,2,1,4,2,1,3,2,1,4,1,2,3];
+  let n = seed || 1;
+  const rnd = () => { n = (n * 9301 + 49297) % 233280; return n / 233280; };
+  const bars = pattern.map((w, i) => {
+    const width = 2 + Math.floor(rnd() * 3);
+    const on = i % 2 === 0;
+    return `<i style="width:${width}px;background:${on ? 'var(--ink)' : 'transparent'};"></i>`;
+  }).join('');
+  return `<div class="barcode">${bars}</div>`;
+}
+
 function render(){
   const { path, params } = parseHash();
   const view = document.getElementById("view");
@@ -289,7 +296,7 @@ function renderHome(view){
         <p class="msg-title">${tr('home_title')}</p>
         <p class="msg-sub">${tr('home_sub')}</p>
         <div class="barcode-label">${tr('scan_label')}</div>
-        <div class="barcode"></div>
+        ${barcodeHTML(7)}
         <div class="qr-wrap" id="qrcode"></div>
         <p class="status-line">${tr('awaiting')}</p>
       </div>
@@ -340,7 +347,7 @@ function renderTicket(view, params){
         ${lineItem(tr('label_rate'), `${CONFIG.CURRENCY}${CONFIG.RATE_PER_HOUR}/hr`)}
         <div class="dash"></div>
         <div class="barcode-label">${tr('exit_label')}</div>
-        <div class="barcode"></div>
+        ${barcodeHTML(id.length + t)}
         <div class="qr-wrap" id="qrcode"></div>
         <p class="footer-note">${tr('footer_note')}</p>
       </div>
@@ -356,13 +363,21 @@ function renderTicket(view, params){
   playDing();
   vibrate(60);
 
-  document.getElementById("saveBtn").onclick = () => {
-    html2canvas(document.getElementById("ticketCard"), { backgroundColor: "#fbfaf4", scale: 2 }).then(canvas => {
+  document.getElementById("saveBtn").onclick = async () => {
+    const btn = document.getElementById("saveBtn");
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    try{
+      if(document.fonts && document.fonts.ready){ await document.fonts.ready; }
+      const canvas = await html2canvas(document.getElementById("ticketCard"), { backgroundColor: "#fbfaf4", scale: 2 });
       const link = document.createElement("a");
       link.download = "parking-ticket-" + id + ".png";
       link.href = canvas.toDataURL("image/png");
       link.click();
-    });
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }
   };
 }
 
