@@ -9,10 +9,10 @@
 <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
 <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
 
-<!-- Google Fonts & Fallback for Thai typography -->
+<!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -24,12 +24,13 @@
     --ink:#1c1a17;
     --muted:#8c8377;
     --stamp:#b5292f;
-    --font-main: 'Prompt', 'Roboto Mono', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, Tahoma, "Leelawadee UI", sans-serif;
+    --font-th: 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'Roboto Mono', monospace;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    font-family: var(--font-main);
+    font-family: var(--font-th);
     background:
       radial-gradient(ellipse at 50% -10%, rgba(255,255,255,0.05), transparent 60%),
       var(--counter);
@@ -40,18 +41,16 @@
     justify-content:center;
     padding:56px 20px;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
   .app{ width:100%; max-width:320px; position:relative; }
 
   .topbar{ display:flex; justify-content:flex-end; margin-bottom:14px; }
   .lang-toggle{
     background:transparent; border:1px solid rgba(251,250,244,0.3); border-radius:3px;
-    color:rgba(251,250,244,0.75); font-family:var(--font-main); font-size:11px; font-weight:700;
-    padding:5px 10px; cursor:pointer; letter-spacing:0.5px;
+    color:rgba(251,250,244,0.75); font-family:var(--font-th); font-size:11px; font-weight:700;
+    padding:5px 10px; cursor:pointer;
   }
   .lang-toggle:hover{ border-color:var(--paper); color:var(--paper); }
-  .lang-toggle:focus-visible, .btn:focus-visible, .staff-link:focus-visible{ outline:2px solid var(--paper); outline-offset:2px; }
 
   .receipt-wrap{ position:relative; }
   .torn{ height:9px; }
@@ -66,34 +65,39 @@
     background-color: var(--paper);
   }
 
+  /* ปรับแต่งสำหรับแก้ปัญหาอักษรทับกันเมื่อถูกแปลงเป็นภาพ Canvas */
   .receipt{
     background:var(--paper); color:var(--ink);
     padding:26px 22px;
     box-shadow: 0 18px 34px -14px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.25);
     overflow:visible;
+    letter-spacing: 0px !important;
+    word-spacing: 0px !important;
   }
 
   .store{ text-align:center; margin-bottom:4px; }
-  .store-name{ font-weight:700; font-size:16px; letter-spacing:1px; }
-  .store-sub{ font-size:11px; color:var(--muted); margin-top:3px; }
+  .store-name{ font-weight:700; font-size:16px; font-family:var(--font-mono); letter-spacing:0.5px; }
+  .store-sub{ font-size:11.5px; color:var(--muted); margin-top:3px; line-height: 1.4; }
 
   .dash{ height:0; margin:16px 0; border-top:1px dashed rgba(28,26,23,0.35); }
 
   .msg-title{ font-size:14px; font-weight:700; margin:0 0 6px 0; line-height:1.4; text-align:center; }
-  .msg-sub{ font-size:11.5px; color:var(--muted); line-height:1.6; text-align:center; margin:0; }
+  .msg-sub{ font-size:12px; color:var(--muted); line-height:1.5; text-align:center; margin:0; }
 
-  .status-line{ font-size:11px; color:var(--muted); text-align:center; margin:10px 0 0 0; letter-spacing:0.5px; }
+  .status-line{ font-size:11px; color:var(--muted); text-align:center; margin:10px 0 0 0; }
 
-  .li{ display:flex; align-items:flex-end; gap:4px; font-size:11.5px; margin:8px 0; }
+  /* ปรับแต่งส่วนแสดงแถวข้อมูล (Line Items) */
+  .li{ display:flex; align-items:center; justify-content:space-between; gap:4px; font-size:12px; margin:8px 0; line-height: 1.5; }
   .li .lbl{ color:var(--muted); white-space:nowrap; }
-  .li .fill{ flex:1; border-bottom:1px dotted rgba(28,26,23,0.4); margin-bottom:3px; }
-  .li .val{ font-weight:700; white-space:nowrap; }
+  .li .fill{ flex:1; border-bottom:1px dotted rgba(28,26,23,0.35); margin:0 4px; height:12px; }
+  .li .val{ font-weight:700; white-space:nowrap; text-align:right; }
+  .num-val{ font-family: var(--font-mono); font-size: 11.5px; }
 
-  .qr-label{ text-align:center; font-size:10px; font-weight:700; letter-spacing:1px; color:var(--muted); margin:12px 0 4px; }
-  .qr-wrap{ display:flex; justify-content:center; padding:8px 0; }
+  .qr-label{ text-align:center; font-size:10px; font-weight:700; font-family:var(--font-mono); letter-spacing:1px; color:var(--muted); margin:12px 0 6px; }
+  .qr-wrap{ display:flex; justify-content:center; padding:6px 0; }
   #qrcode img, #qrcode canvas{ display:block; }
 
-  .footer-note{ text-align:center; font-size:10px; color:var(--muted); line-height:1.7; margin-top:12px; }
+  .footer-note{ text-align:center; font-size:10.5px; color:var(--muted); line-height:1.5; margin-top:12px; }
 
   .stamp{
     position:absolute; top:10px; right:8px;
@@ -106,9 +110,8 @@
 
   .btn{
     width:100%; display:block; text-align:center; padding:12px 16px; margin-top:20px;
-    border-radius:3px; font-size:13px; font-weight:700; font-family:var(--font-main);
-    border:1.5px solid var(--paper); letter-spacing:0.5px;
-    cursor:pointer; text-decoration:none; background:transparent; color:var(--paper);
+    border-radius:3px; font-size:13px; font-weight:700; font-family:var(--font-th);
+    border:1.5px solid var(--paper); cursor:pointer; text-decoration:none; background:transparent; color:var(--paper);
     transition:background .15s ease, color .15s ease;
   }
   .btn:hover{ background:var(--paper); color:var(--ink); }
@@ -117,7 +120,7 @@
 
   .staff-link{
     display:block; text-align:center; font-size:11px; color:rgba(251,250,244,0.55);
-    text-decoration:none; margin-top:16px; letter-spacing:0.3px;
+    text-decoration:none; margin-top:16px;
   }
   .staff-link:hover{ color:var(--paper); }
 
@@ -222,11 +225,12 @@ function tr(k, ...args){
 
 function dtLocale(){ return LANG === "th" ? "th-TH" : "en-GB"; }
 
+// ฟังก์ชันจัดรูปแบบเวลาใหม่ เพิ่มการเว้นวรรคให้ตรงตามมาตรฐาน ป้องกัน html2canvas แสดงผลซ้อนทับ
 function fmtDateTime(ms){
-  return new Date(ms).toLocaleString(dtLocale(), {
-    day:'2-digit', month:'2-digit', year:'numeric',
-    hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: false
-  });
+  const d = new Date(ms);
+  const dateStr = d.toLocaleDateString(dtLocale(), { day:'2-digit', month:'2-digit', year:'numeric' });
+  const timeStr = d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: false });
+  return `<span class="num-val">${dateStr}&nbsp;&nbsp;${timeStr}</span>`;
 }
 
 function playDing(){
@@ -332,10 +336,10 @@ function renderTicket(view, params){
           <div class="store-sub">${tr('store_sub')}</div>
         </div>
         <div class="dash"></div>
-        <p class="msg-sub" style="margin-bottom:10px;">${tr('ticket_sub')}</p>
-        ${lineItem(tr('label_id'), id)}
+        <p class="msg-sub" style="margin-bottom:12px;">${tr('ticket_sub')}</p>
+        ${lineItem(tr('label_id'), `<span class="num-val">${id}</span>`)}
         ${lineItem(tr('label_checkin'), fmtDateTime(t))}
-        ${lineItem(tr('label_rate'), `${CONFIG.CURRENCY}${CONFIG.RATE_PER_HOUR}/ช.ม.`)}
+        ${lineItem(tr('label_rate'), `<span class="num-val">${CONFIG.CURRENCY}${CONFIG.RATE_PER_HOUR}/ชม.</span>`)}
         <div class="dash"></div>
         <div class="qr-label">${tr('exit_label')}</div>
         <div class="qr-wrap" id="qrcode"></div>
@@ -359,12 +363,18 @@ function renderTicket(view, params){
     btn.disabled = true;
     try{
       if(document.fonts && document.fonts.ready){ await document.fonts.ready; }
-      const canvas = await html2canvas(document.getElementById("ticketCard"), { 
+      
+      const targetCard = document.getElementById("ticketCard");
+      
+      const canvas = await html2canvas(targetCard, { 
         backgroundColor: "#fbfaf4", 
         scale: 2,
         useCORS: true,
+        letterRendering: true,
+        allowTaint: true,
         logging: false
       });
+      
       const link = document.createElement("a");
       link.download = "parking-ticket-" + id + ".png";
       link.href = canvas.toDataURL("image/png");
