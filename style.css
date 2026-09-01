@@ -25,13 +25,17 @@ body{
   -webkit-font-smoothing: antialiased;
 }
 
+/* ซ่อน Element ขยะที่อาจเกิดจาก PyScript */
+py-script, pyscript-script, py-config, script[type="py"] {
+  display: none !important;
+}
+
 .app{ width:100%; max-width:320px; position:relative; }
 
-/* จัดตำแหน่ง Topbar ให้อยู่ทางขวาบนเหมือนชุดแรก */
 .topbar{ display:flex; justify-content:flex-end; margin-bottom:14px; }
 .lang-toggle{
   background:transparent; border:1px solid rgba(251,250,244,0.3); border-radius:3px;
-  color:rgba(251,250,244,0.75); font-family:'Roboto Mono', monospace; font-size:11px; font-weight:700;
+  color:rgba(251,250,244,0.75); font-family:var(--font-mono); font-size:11px; font-weight:700;
   padding:5px 10px; cursor:pointer; letter-spacing:0.5px;
 }
 .lang-toggle:hover{ border-color:var(--paper); color:var(--paper); }
